@@ -1,0 +1,74 @@
+[
+  {
+    "roll_no": "250133154001",
+    "name": "Aarav Sharma",
+    "cgpa": 9.4,
+    "attendance": 91,
+    "family_income": 180000,
+    "requested_amount": 30000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154002",
+    "name": "Ananya Verma",
+    "cgpa": 8.9,
+    "attendance": 96,
+    "family_income": 80000,
+    "requested_amount": 25000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154003",
+    "name": "Rohan Singh",
+    "cgpa": 9.7,
+    "attendance": 88,
+    "family_income": 600000,
+    "requested_amount": 50000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154004",
+    "name": "Priya Gupta",
+    "cgpa": 8.2,
+    "attendance": 93,
+    "family_income": 120000,
+    "requested_amount": 20000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154005",
+    "name": "Kabir Mehta",
+    "cgpa": 7.8,
+    "attendance": 82,
+    "family_income": 250000,
+    "requested_amount": 35000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154006",
+    "name": "Meera Joshi",
+    "cgpa": 9.1,
+    "attendance": 89,
+    "family_income": 150000,
+    "requested_amount": 40000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154007",
+    "name": "Dev Malhotra",
+    "cgpa": 8.6,
+    "attendance": 76,
+    "family_income": 450000,
+    "requested_amount": 30000,
+    "eligible": true
+  },
+  {
+    "roll_no": "250133154008",
+    "name": "Ishita Kapoor",
+    "cgpa": 9.0,
+    "attendance": 94,
+    "family_income": 100000,
+    "requested_amount": 45000,
+    "eligible": true
+  }
+]
