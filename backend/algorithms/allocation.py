@@ -6,7 +6,11 @@ The model is an exact 0/1 allocation problem:
 - priority score = value
 - budget = capacity
 - each applicant is either fully funded or not funded
-- objective is maximum total priority value without exceeding budget.
+- objective = maximum total priority value without exceeding the budget.
+
+For equal-value solutions, the deterministic tie-break is:
+1. lower total spending;
+2. lexicographically smaller sorted roll-number tuple.
 
 The dynamic-programming solver is the primary allocation algorithm.
 The branch-and-bound solver independently solves the same model for verification.
@@ -49,14 +53,14 @@ def _prepare_items(applicants: list[dict]) -> list[dict]:
 
 
 def _better(value_a, cost_a, rolls_a, value_b, cost_b, rolls_b):
+    """Return True when solution A is preferred to solution B."""
     epsilon = 1e-9
     if value_a > value_b + epsilon:
         return True
     if abs(value_a - value_b) <= epsilon:
-        if cost_a < cost_b:
-            return True
-        if cost_a == cost_b:
-            return rolls_a < rolls_b
+        if cost_a != cost_b:
+            return cost_a < cost_b
+        return tuple(sorted(rolls_a)) < tuple(sorted(rolls_b))
     return False
 
 
@@ -69,37 +73,37 @@ def allocate_dynamic_programming(applicants: list[dict], budget: int) -> Allocat
     capacity = budget // BUDGET_UNIT
     n = len(items)
 
-    values = [[0.0] * (capacity + 1) for _ in range(n + 1)]
-    choices = [[False] * (capacity + 1) for _ in range(n + 1)]
+    # Each state stores: (value, cost, sorted roll numbers, selected indices).
+    # Keeping the complete state makes equal-value tie-breaking explicit.
+    empty_state = (0.0, 0, (), ())
+    states = [[empty_state] * (capacity + 1) for _ in range(n + 1)]
 
     for i in range(1, n + 1):
         item = items[i - 1]
         for remaining in range(capacity + 1):
-            best = values[i - 1][remaining]
+            best = states[i - 1][remaining]
             if item["cost"] <= remaining:
-                candidate = values[i - 1][remaining - item["cost"]] + item["value"]
-                if candidate > best + 1e-9:
-                    values[i][remaining] = candidate
-                    choices[i][remaining] = True
-                    continue
-            values[i][remaining] = best
+                previous = states[i - 1][remaining - item["cost"]]
+                candidate = (
+                    previous[0] + item["value"],
+                    previous[1] + item["cost"],
+                    tuple(sorted(previous[2] + (item["roll_no"],))),
+                    previous[3] + (i - 1,),
+                )
+                if _better(candidate[0], candidate[1], candidate[2],
+                           best[0], best[1], best[2]):
+                    best = candidate
+            states[i][remaining] = best
 
-    selected_indices = []
-    remaining = capacity
-    for i in range(n, 0, -1):
-        if choices[i][remaining]:
-            selected_indices.append(i - 1)
-            remaining -= items[i - 1]["cost"]
-
-    selected_indices.reverse()
+    best = states[n][capacity]
+    selected_indices = best[3]
     selected = [items[index]["applicant"] for index in selected_indices]
-    total_awarded = sum(items[index]["cost"] * BUDGET_UNIT for index in selected_indices)
-    total_value = sum(items[index]["value"] for index in selected_indices)
+    total_awarded = best[1] * BUDGET_UNIT
 
     return AllocationResult(
         selected=selected,
         total_awarded=total_awarded,
-        total_value=round(total_value, 2),
+        total_value=round(best[0], 2),
         remaining_budget=budget - total_awarded,
     )
 
@@ -114,20 +118,23 @@ def allocate_branch_and_bound(applicants: list[dict], budget: int) -> Allocation
 
     ordered = sorted(
         items,
-        key=lambda item: item["value"] / item["cost"] if item["cost"] else 0,
+        key=lambda item: (
+            item["value"] / item["cost"] if item["cost"] else 0,
+            item["value"],
+            item["roll_no"],
+        ),
         reverse=True,
     )
 
     best_value = 0.0
     best_cost = 0
+    best_rolls = ()
     best_indices = ()
-
-    def roll_tuple(indices):
-        return tuple(ordered[i]["roll_no"] for i in indices)
 
     def bound(start, cost, value):
         if cost >= capacity:
             return value
+
         estimate = value
         used = cost
         for index in range(start, len(ordered)):
@@ -143,12 +150,20 @@ def allocate_branch_and_bound(applicants: list[dict], budget: int) -> Allocation
         return estimate
 
     def search(index, cost, value, chosen):
-        nonlocal best_value, best_cost, best_indices
+        nonlocal best_value, best_cost, best_rolls, best_indices
 
-        if _better(value, cost, roll_tuple(chosen),
-                   best_value, best_cost, roll_tuple(best_indices)):
+        chosen_rolls = tuple(sorted(ordered[i]["roll_no"] for i in chosen))
+        if _better(
+            value,
+            cost,
+            chosen_rolls,
+            best_value,
+            best_cost,
+            best_rolls,
+        ):
             best_value = value
             best_cost = cost
+            best_rolls = chosen_rolls
             best_indices = chosen
 
         if index >= len(ordered) or bound(index, cost, value) < best_value - 1e-9:
@@ -156,8 +171,12 @@ def allocate_branch_and_bound(applicants: list[dict], budget: int) -> Allocation
 
         item = ordered[index]
         if cost + item["cost"] <= capacity:
-            search(index + 1, cost + item["cost"],
-                   value + item["value"], chosen + (index,))
+            search(
+                index + 1,
+                cost + item["cost"],
+                value + item["value"],
+                chosen + (index,),
+            )
         search(index + 1, cost, value, chosen)
 
     search(0, 0, 0.0, ())
