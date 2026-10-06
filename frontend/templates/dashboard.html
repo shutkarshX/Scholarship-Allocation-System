@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scholarship Allocation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <p class="eyebrow">DSA-II PBL</p>
+            <h1>Intelligent Scholarship Allocation System</h1>
+            <p class="subtitle">Eligibility, priority scoring, and applicant ranking.</p>
+        </header>
+
+        <section class="stats">
+            <article><span>Total Applicants</span><strong>{{ applicants|length }}</strong></article>
+            <article><span>Eligible</span><strong>{{ eligible_count }}</strong></article>
+            <article><span>Income Limit</span><strong>₹{{ "{:,.0f}".format(policy.max_family_income) }}</strong></article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Applicant Evaluation</h2>
+                <a href="/api/applicants">JSON API</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th><th>Applicant</th><th>CGPA</th><th>Attendance</th>
+                            <th>Income</th><th>Eligibility</th><th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for applicant in ranked %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><strong>{{ applicant.name }}</strong><small>{{ applicant.roll_no }}</small></td>
+                            <td>{{ applicant.cgpa }}</td>
+                            <td>{{ applicant.attendance }}%</td>
+                            <td>₹{{ "{:,.0f}".format(applicant.family_income) }}</td>
+                            <td><span class="status eligible">Eligible</span></td>
+                            <td><strong>{{ applicant.priority_score }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                        {% for applicant in applicants if not applicant.eligible %}
+                        <tr class="muted">
+                            <td>—</td>
+                            <td><strong>{{ applicant.name }}</strong><small>{{ applicant.roll_no }}</small></td>
+                            <td>{{ applicant.cgpa }}</td>
+                            <td>{{ applicant.attendance }}%</td>
+                            <td>₹{{ "{:,.0f}".format(applicant.family_income) }}</td>
+                            <td><span class="status ineligible">Ineligible</span></td>
+                            <td>—</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
