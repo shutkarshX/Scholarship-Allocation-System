@@ -11,8 +11,9 @@ from services.applicant_store import ApplicantStore
 from services.eligibility import DEFAULT_POLICY, evaluate_eligibility, validate_applicant
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA_FILE = ROOT / "data" / "sample_students.json"
-STORE = ApplicantStore(DATA_FILE)
+SAMPLE_DATA_FILE = ROOT / "data" / "sample_students.json"
+APPLICANT_DATA_FILE = ROOT / "data" / "applicants.json"
+STORE = ApplicantStore(APPLICANT_DATA_FILE)
 
 app = Flask(
     __name__,
@@ -22,7 +23,10 @@ app = Flask(
 
 
 def load_applicants() -> list[dict]:
-    return STORE.load()
+    sample_applicants = json.loads(
+        SAMPLE_DATA_FILE.read_text(encoding="utf-8")
+    )
+    return sample_applicants + STORE.load()
 
 
 def evaluate_applicants() -> list[dict]:
@@ -89,11 +93,15 @@ def add_applicant():
     except (TypeError, ValueError):
         errors.append("Year and dependents must be integers")
 
+    if any(str(existing["roll_no"]) == applicant["roll_no"] for existing in load_applicants()):
+        errors.append("An applicant with this roll number already exists")
+
     if errors:
+        current_applicants = evaluate_applicants()
         return render_template(
             "dashboard.html",
-            applicants=evaluate_applicants(),
-            eligible_count=sum(a["eligible"] for a in evaluate_applicants()),
+            applicants=current_applicants,
+            eligible_count=sum(a["eligible"] for a in current_applicants),
             policy=DEFAULT_POLICY,
             form_error="; ".join(errors),
             form_data=applicant,
@@ -102,10 +110,11 @@ def add_applicant():
     try:
         STORE.add(applicant)
     except ValueError as exc:
+        current_applicants = evaluate_applicants()
         return render_template(
             "dashboard.html",
-            applicants=evaluate_applicants(),
-            eligible_count=sum(a["eligible"] for a in evaluate_applicants()),
+            applicants=current_applicants,
+            eligible_count=sum(a["eligible"] for a in current_applicants),
             policy=DEFAULT_POLICY,
             form_error=str(exc),
             form_data=applicant,
