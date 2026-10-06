@@ -118,6 +118,7 @@ def add_applicant():
         return render_template(
             "dashboard.html",
             applicants=current_applicants,
+            ranked_applicants=rank_eligible_applicants(current_applicants),
             eligible_count=sum(a["eligible"] for a in current_applicants),
             policy=DEFAULT_POLICY,
             form_error=str(exc),
