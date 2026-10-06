@@ -60,6 +60,36 @@
 
         <section class="panel">
             <div class="panel-heading">
+                <h2>Applicant Ranking</h2>
+                <a href="/api/rankings">Rankings API</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th><th>Applicant</th><th>Priority</th><th>CGPA</th><th>Attendance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for applicant in ranked_applicants %}
+                        <tr>
+                            <td><strong>{{ applicant.rank }}</strong></td>
+                            <td>
+                                <strong>{{ applicant.name }}</strong>
+                                <small>{{ applicant.roll_no }}</small>
+                            </td>
+                            <td><strong>{{ applicant.priority_score }}</strong></td>
+                            <td>{{ applicant.cgpa }}</td>
+                            <td>{{ applicant.attendance }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
                 <h2>Applicant Evaluation</h2>
                 <a href="/api/applicants">JSON API</a>
             </div>
