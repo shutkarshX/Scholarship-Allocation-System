@@ -47,3 +47,15 @@ No future-phase ranking, allocation, or optimization modules are being added in 
 Existing scaffold code is not automatically treated as completed project work. It must be tested and verified before it is described as implementation evidence.
 
 Future functionality must not be presented as completed simply because it has been discussed.
+
+## 2026-10-07 — Phase 1 Research and Lookup Verification Coverage
+
+The project research was documented using scholarship-allocation decision-support literature. The reviewed work supports the project's overall decision-support framing and the later connection between budget-constrained scholarship assignment and 0/1 knapsack/dynamic programming. These sources do not determine the project's institutional policy thresholds or score weights.
+
+A separate API-level test file was added for the current hash-based applicant lookup:
+
+- Existing roll number returns the corresponding applicant.
+- Unknown roll number returns HTTP 404 with an explicit error.
+
+The tests provide verification coverage for the current DSA lookup component. Actual local execution of the complete updated test suite and browser-based evidence still has to be performed in the developer environment before those results are recorded as completed evidence.
+
