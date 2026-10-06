@@ -6,6 +6,7 @@ from pathlib import Path
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 
 from algorithms.hashing import ApplicantHashTable
+from algorithms.ranking import rank_eligible_applicants
 from algorithms.scoring import calculate_score_breakdown
 from services.applicant_store import ApplicantStore
 from services.eligibility import DEFAULT_POLICY, evaluate_eligibility, validate_applicant
@@ -57,9 +58,11 @@ def evaluate_applicants() -> list[dict]:
 @app.get("/")
 def dashboard():
     applicants = evaluate_applicants()
+    ranked_applicants = rank_eligible_applicants(applicants)
     return render_template(
         "dashboard.html",
         applicants=applicants,
+        ranked_applicants=ranked_applicants,
         eligible_count=sum(a["eligible"] for a in applicants),
         policy=DEFAULT_POLICY,
     )
@@ -101,6 +104,7 @@ def add_applicant():
         return render_template(
             "dashboard.html",
             applicants=current_applicants,
+            ranked_applicants=rank_eligible_applicants(current_applicants),
             eligible_count=sum(a["eligible"] for a in current_applicants),
             policy=DEFAULT_POLICY,
             form_error="; ".join(errors),
@@ -126,6 +130,11 @@ def add_applicant():
 @app.get("/api/applicants")
 def applicants_api():
     return jsonify(evaluate_applicants())
+
+
+@app.get("/api/rankings")
+def rankings_api():
+    return jsonify(rank_eligible_applicants(evaluate_applicants()))
 
 
 @app.get("/api/applicants/<roll_no>")
