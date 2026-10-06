@@ -30,7 +30,7 @@ Fields currently used by the application:
 - Dependents
 - Previous Scholarship
 
-Only fields with a current purpose should remain.
+These fields support the current applicant-entry and evaluation flow.
 
 ## 4. Current Eligibility Policy
 
@@ -54,17 +54,17 @@ All components are normalized to 0–100.
 - Financial Need: 40%
 - Attendance: 20%
 
-Academic score: `(CGPA / 10) × 100`
+Academic score: (CGPA / 10) × 100
 
-Need score: `((income_limit - family_income) / income_limit) × 100`, clamped to 0–100.
+Need score: ((income_limit - family_income) / income_limit) × 100, clamped to 0–100.
 
 Attendance score is the attendance percentage.
 
-Final score: `academic × 0.40 + need × 0.40 + attendance × 0.20`
+Final score: academic × 0.40 + need × 0.40 + attendance × 0.20
 
 ## 6. Current DSA Work
 
-The current DSA component is **hash-based applicant lookup**.
+The current DSA component is hash-based applicant lookup.
 
 - Applicant records are stored in a hash-table abstraction.
 - Roll number is used as the lookup key.
@@ -73,7 +73,19 @@ The current DSA component is **hash-based applicant lookup**.
 
 Other algorithms are intentionally not stored or implemented until a later phase requires them.
 
-## 7. Current Technical Stack
+## 7. Current Applicant Management
+
+Applicants can be entered manually through the web interface.
+
+- The form collects the current applicant fields.
+- Input is validated before storage.
+- Roll numbers must be unique.
+- Records are stored in the local controlled JSON dataset.
+- The same eligibility and scoring logic is applied after an applicant is added.
+
+This is local development storage; no database is introduced at this stage.
+
+## 8. Current Technical Stack
 
 - Python
 - Flask
@@ -82,17 +94,18 @@ Other algorithms are intentionally not stored or implemented until a later phase
 
 No database or additional framework is being introduced at this stage.
 
-## 8. Phase 1 Definition
+## 9. Phase 1 Definition
 
 Phase 1 is concerned only with establishing and validating the foundation:
 
 1. Applicant data and validation
-2. Eligibility evaluation
-3. Priority scoring
-4. Hash-based lookup
-5. Minimal web interface
-6. Core tests
-7. Controlled sample data
-8. Genuine development evidence
+2. Manual applicant entry
+3. Eligibility evaluation
+4. Priority scoring
+5. Hash-based lookup
+6. Minimal web interface
+7. Core tests
+8. Controlled sample data
+9. Genuine development evidence
 
 When these are working and verified, the next phase can be designed from the actual results. Future-phase modules are intentionally not specified or implemented here.
