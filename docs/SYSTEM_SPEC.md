@@ -64,15 +64,14 @@ Final score: `academic × 0.40 + need × 0.40 + attendance × 0.20`
 
 ## 6. Current DSA Work
 
-The repository contains DSA implementations being validated against actual requirements:
+The current DSA component is **hash-based applicant lookup**.
 
-- Hash table for applicant lookup
-- Merge Sort for applicant ordering
-- Max Heap for priority retrieval
-- Greedy allocation
-- Dynamic programming allocation
+- Applicant records are stored in a hash-table abstraction.
+- Roll number is used as the lookup key.
+- Lookup is expected to be O(1) average time.
+- The implementation is validated through automated tests and the web API.
 
-A module stays only if testing demonstrates a real purpose. No algorithm is retained simply to increase the DSA count.
+Other algorithms are intentionally not stored or implemented until a later phase requires them.
 
 ## 7. Current Technical Stack
 
