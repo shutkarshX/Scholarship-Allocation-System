@@ -55,6 +55,7 @@ def dashboard():
         "dashboard.html",
         applicants=applicants,
         eligible_count=sum(a["eligible"] for a in applicants),
+        ranked=applicants,
         policy=DEFAULT_POLICY,
     )
 
