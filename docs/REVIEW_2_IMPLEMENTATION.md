@@ -45,3 +45,22 @@ For n eligible applicants and budget capacity B in ₹1,000 units:
 ## Verification
 
 The automated tests cover normal allocation, ineligible exclusion, zero budget, invalid budget units, invalid request units, and agreement between DP and branch-and-bound.
+
+
+## Verified Test Evidence
+
+GitHub Actions run 5 completed successfully after the allocation API tests were added.
+
+- 29 tests executed
+- 29 tests passed
+- 0 failures
+
+For a ₹1,00,000 test budget, the verified API result was:
+
+- total awarded: ₹90,000
+- remaining budget: ₹10,000
+- total priority value: 257.0
+- selected applicants: Ananya Verma, Priya Gupta, Ishita Kapoor
+- DP and branch-and-bound outputs matched.
+
+A browser screenshot is not claimed yet; the automated/API evidence is the current verified evidence.
