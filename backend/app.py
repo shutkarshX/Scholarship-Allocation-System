@@ -51,24 +51,10 @@ def evaluate_applicants() -> list[dict]:
 @app.get("/")
 def dashboard():
     applicants = evaluate_applicants()
-    eligible = [a for a in applicants if a["eligible"]]
-    ranked = sorted(
-        eligible,
-        key=lambda a: (
-            a["priority_score"],
-            a["need_score"],
-            -float(a["family_income"]),
-            -float(a["requested_amount"]),
-            a["roll_no"],
-        ),
-        reverse=True,
-    )
-
     return render_template(
         "dashboard.html",
         applicants=applicants,
-        eligible_count=len(eligible),
-        ranked=ranked,
+        eligible_count=sum(a["eligible"] for a in applicants),
         policy=DEFAULT_POLICY,
     )
 
