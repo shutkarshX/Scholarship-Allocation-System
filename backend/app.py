@@ -1,10 +1,11 @@
-"""Minimal Flask application for the scholarship system."""
+"""Flask application for the scholarship decision-support system."""
 
 import json
 from pathlib import Path
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 
+from algorithms.allocation import allocate_branch_and_bound, allocate_dynamic_programming
 from algorithms.hashing import ApplicantHashTable
 from algorithms.ranking import rank_eligible_applicants
 from algorithms.scoring import calculate_score_breakdown
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SAMPLE_DATA_FILE = ROOT / "data" / "sample_students.json"
 APPLICANT_DATA_FILE = ROOT / "data" / "applicants.json"
 STORE = ApplicantStore(APPLICANT_DATA_FILE)
+DEFAULT_BUDGET = 100000
 
 app = Flask(
     __name__,
@@ -24,9 +26,7 @@ app = Flask(
 
 
 def load_applicants() -> list[dict]:
-    sample_applicants = json.loads(
-        SAMPLE_DATA_FILE.read_text(encoding="utf-8")
-    )
+    sample_applicants = json.loads(SAMPLE_DATA_FILE.read_text(encoding="utf-8"))
     return sample_applicants + STORE.load()
 
 
@@ -55,16 +55,46 @@ def evaluate_applicants() -> list[dict]:
     return applicants
 
 
+def allocation_view(budget: int) -> dict:
+    applicants = evaluate_applicants()
+    dp = allocate_dynamic_programming(applicants, budget)
+    bnb = allocate_branch_and_bound(applicants, budget)
+    return {
+        "budget": budget,
+        "selected": dp.selected,
+        "total_awarded": dp.total_awarded,
+        "total_value": dp.total_value,
+        "remaining_budget": dp.remaining_budget,
+        "cross_check_matches": (
+            dp.total_awarded == bnb.total_awarded
+            and dp.total_value == bnb.total_value
+            and {a["roll_no"] for a in dp.selected}
+            == {a["roll_no"] for a in bnb.selected}
+        ),
+    }
+
+
 @app.get("/")
 def dashboard():
     applicants = evaluate_applicants()
     ranked_applicants = rank_eligible_applicants(applicants)
+    budget = request.args.get("budget", DEFAULT_BUDGET, type=int)
+
+    allocation_error = None
+    allocation = None
+    try:
+        allocation = allocation_view(budget)
+    except ValueError as exc:
+        allocation_error = str(exc)
+
     return render_template(
         "dashboard.html",
         applicants=applicants,
         ranked_applicants=ranked_applicants,
         eligible_count=sum(a["eligible"] for a in applicants),
         policy=DEFAULT_POLICY,
+        allocation=allocation,
+        allocation_error=allocation_error,
     )
 
 
@@ -109,6 +139,8 @@ def add_applicant():
             policy=DEFAULT_POLICY,
             form_error="; ".join(errors),
             form_data=applicant,
+            allocation=None,
+            allocation_error=None,
         ), 400
 
     try:
@@ -123,6 +155,8 @@ def add_applicant():
             policy=DEFAULT_POLICY,
             form_error=str(exc),
             form_data=applicant,
+            allocation=None,
+            allocation_error=None,
         ), 400
 
     return redirect(url_for("dashboard"))
@@ -136,6 +170,15 @@ def applicants_api():
 @app.get("/api/rankings")
 def rankings_api():
     return jsonify(rank_eligible_applicants(evaluate_applicants()))
+
+
+@app.get("/api/allocation")
+def allocation_api():
+    budget = request.args.get("budget", DEFAULT_BUDGET, type=int)
+    try:
+        return jsonify(allocation_view(budget))
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
 
 @app.get("/api/applicants/<roll_no>")
