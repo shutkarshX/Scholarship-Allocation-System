@@ -2,73 +2,105 @@
   {
     "roll_no": "250133154001",
     "name": "Aarav Sharma",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 9.4,
     "attendance": 91,
     "family_income": 180000,
     "requested_amount": 30000,
-    "eligible": true
+    "category": "General",
+    "dependents": 4,
+    "previous_scholarship": false
   },
   {
     "roll_no": "250133154002",
     "name": "Ananya Verma",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 8.9,
     "attendance": 96,
     "family_income": 80000,
     "requested_amount": 25000,
-    "eligible": true
+    "category": "General",
+    "dependents": 5,
+    "previous_scholarship": false
   },
   {
     "roll_no": "250133154003",
     "name": "Rohan Singh",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 9.7,
     "attendance": 88,
     "family_income": 600000,
     "requested_amount": 50000,
-    "eligible": true
+    "category": "General",
+    "dependents": 2,
+    "previous_scholarship": false
   },
   {
     "roll_no": "250133154004",
     "name": "Priya Gupta",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 8.2,
     "attendance": 93,
     "family_income": 120000,
     "requested_amount": 20000,
-    "eligible": true
+    "category": "OBC",
+    "dependents": 4,
+    "previous_scholarship": false
   },
   {
     "roll_no": "250133154005",
     "name": "Kabir Mehta",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 7.8,
     "attendance": 82,
     "family_income": 250000,
     "requested_amount": 35000,
-    "eligible": true
+    "category": "General",
+    "dependents": 3,
+    "previous_scholarship": true
   },
   {
     "roll_no": "250133154006",
     "name": "Meera Joshi",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 9.1,
     "attendance": 89,
     "family_income": 150000,
     "requested_amount": 40000,
-    "eligible": true
+    "category": "General",
+    "dependents": 4,
+    "previous_scholarship": false
   },
   {
     "roll_no": "250133154007",
     "name": "Dev Malhotra",
+    "course": "BTech CSE(DS)",
+    "year": 3,
     "cgpa": 8.6,
-    "attendance": 76,
+    "attendance": 74,
     "family_income": 450000,
     "requested_amount": 30000,
-    "eligible": true
+    "category": "General",
+    "dependents": 2,
+    "previous_scholarship": false
   },
   {
     "roll_no": "250133154008",
     "name": "Ishita Kapoor",
-    "cgpa": 9.0,
+    "course": "BTech CSE(DS)",
+    "year": 3,
+    "cgpa": 9,
     "attendance": 94,
     "family_income": 100000,
     "requested_amount": 45000,
-    "eligible": true
+    "category": "SC",
+    "dependents": 5,
+    "previous_scholarship": false
   }
 ]
