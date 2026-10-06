@@ -86,3 +86,33 @@ The API lookup tests are included in the complete 11-test suite described above.
 ## Phase 1 Checkpoint — Completed
 
 Phase 1 is officially marked complete after implementation, automated testing, and browser verification. This commit is the Phase 1 checkpoint before Phase 2 development begins.
+
+
+## 2026-10-07 — Phase 2 Heap-Based Ranking
+
+Phase 2 extended the Phase 1 eligibility and priority-scoring pipeline with a heap-based priority queue.
+
+Completed work:
+
+- Added `backend/algorithms/ranking.py`.
+- Implemented `ScholarshipPriorityQueue` using Python's `heapq`.
+- Ranked only eligible applicants.
+- Used the existing Phase 1 priority score without changing its formula.
+- Added deterministic roll-number tie-breaking for equal scores.
+- Added `GET /api/rankings`.
+- Added the Applicant Ranking section to the dashboard.
+- Added dedicated ranking tests and ranking API coverage.
+- Refined the dashboard visual system into a deep blue-green application shell with warm cream workspace surfaces and a restrained accent palette.
+
+Verification:
+
+- 21 tests executed.
+- 21 tests passed.
+- 0 failures.
+- Browser dashboard successfully displayed 6 eligible applicants in descending priority order.
+- `/api/rankings` returned the same verified ranking as JSON.
+- The 2 ineligible controlled applicants were excluded from the ranking.
+
+The repository's manual applicant store was cleaned before verification, leaving the controlled 8-applicant dataset as the local baseline.
+
+Phase 2 does not implement scholarship budget allocation or dynamic programming. Those remain future development stages.
