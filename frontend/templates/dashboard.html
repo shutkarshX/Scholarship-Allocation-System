@@ -10,18 +10,18 @@
     <main class="container">
         <header class="site-header">
             <div class="brand"><span class="brand-mark">SA</span> Scholarship Allocation System</div>
-            <span class="header-note">DSA-II · Decision Support Prototype</span>
+            <span class="header-note">DSA-II · Decision Support System</span>
         </header>
 
         <section class="hero">
             <div>
                 <p class="eyebrow">Scholarship review workspace</p>
                 <h1>Intelligent Scholarship Allocation System</h1>
-                <p class="subtitle">Evaluate applications consistently, understand eligibility, and rank deserving applicants using transparent scoring.</p>
+                <p class="subtitle">Evaluate applications, rank eligible candidates, and allocate a fixed scholarship budget using transparent DSA-based decision support.</p>
             </div>
             <aside class="hero-note">
-                <strong>Current stage</strong>
-                Eligibility, priority scoring and heap-based applicant ranking.
+                <strong>Current workflow</strong>
+                Eligibility → Priority Score → Heap Ranking → Budget Allocation.
             </aside>
         </section>
 
@@ -36,11 +36,9 @@
             <div class="panel-heading">
                 <h2>Add Applicant</h2>
             </div>
-
             {% if form_error %}
             <p class="form-error">{{ form_error }}</p>
             {% endif %}
-
             <form method="post" action="/applicants" class="applicant-form">
                 <label>Roll No.<input name="roll_no" value="{{ form_data.roll_no if form_data else '' }}" required></label>
                 <label>Name<input name="name" value="{{ form_data.name if form_data else '' }}" required></label>
@@ -49,7 +47,7 @@
                 <label>CGPA<input type="number" name="cgpa" min="0" max="10" step="0.01" value="{{ form_data.cgpa if form_data else '' }}" required></label>
                 <label>Attendance %<input type="number" name="attendance" min="0" max="100" step="0.1" value="{{ form_data.attendance if form_data else '' }}" required></label>
                 <label>Annual Family Income<input type="number" name="family_income" min="0" step="1" value="{{ form_data.family_income if form_data else '' }}" required></label>
-                <label>Requested Amount<input type="number" name="requested_amount" min="1" step="1" value="{{ form_data.requested_amount if form_data else '' }}" required></label>
+                <label>Requested Amount (₹)<input type="number" name="requested_amount" min="1000" step="1000" value="{{ form_data.requested_amount if form_data else '' }}" required></label>
                 <label>Category
                     <select name="category">
                         {% for category in ["General", "OBC", "SC", "ST", "Other"] %}
@@ -70,6 +68,68 @@
             </form>
         </section>
 
+        <section class="panel allocation-panel">
+            <div class="panel-heading">
+                <div>
+                    <p>Budget decision</p>
+                    <h2>Scholarship Allocation</h2>
+                </div>
+                <a href="/api/allocation?budget=100000">Allocation API</a>
+            </div>
+
+            <form method="get" action="/" class="applicant-form allocation-form">
+                <label>Available Budget (₹)
+                    <input type="number" name="budget" min="0" step="1000"
+                           value="{{ allocation.budget if allocation else 100000 }}" required>
+                </label>
+                <div class="form-actions">
+                    <button type="submit">Run Allocation</button>
+                </div>
+            </form>
+
+            {% if allocation_error %}
+            <p class="form-error">{{ allocation_error }}</p>
+            {% endif %}
+
+            {% if allocation %}
+            <div class="allocation-summary">
+                <div><span>Budget</span><strong>₹{{ "{:,.0f}".format(allocation.budget) }}</strong></div>
+                <div><span>Awarded</span><strong>₹{{ "{:,.0f}".format(allocation.total_awarded) }}</strong></div>
+                <div><span>Remaining</span><strong>₹{{ "{:,.0f}".format(allocation.remaining_budget) }}</strong></div>
+                <div><span>Total Priority Value</span><strong>{{ allocation.total_value }}</strong></div>
+            </div>
+
+            <div class="allocation-check">
+                <strong>Exact-solver cross-check:</strong>
+                {% if allocation.cross_check_matches %}
+                DP and branch-and-bound selected the same applicants and value.
+                {% else %}
+                The two exact solvers produced different results and require review.
+                {% endif %}
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Applicant</th><th>Priority</th><th>Requested</th><th>Decision</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for applicant in allocation.selected %}
+                        <tr>
+                            <td><strong>{{ applicant.name }}</strong><small>{{ applicant.roll_no }}</small></td>
+                            <td>{{ applicant.priority_score }}</td>
+                            <td>₹{{ "{:,.0f}".format(applicant.requested_amount) }}</td>
+                            <td><span class="status eligible">Selected</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4">No applicant can be funded within this budget.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </section>
+
         <section class="panel ranking-panel">
             <div class="panel-heading">
                 <div>
@@ -81,18 +141,13 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Rank</th><th>Applicant</th><th>Priority</th><th>CGPA</th><th>Attendance</th>
-                        </tr>
+                        <tr><th>Rank</th><th>Applicant</th><th>Priority</th><th>CGPA</th><th>Attendance</th></tr>
                     </thead>
                     <tbody>
                         {% for applicant in ranked_applicants %}
                         <tr>
                             <td><strong class="rank-number">{{ applicant.rank }}</strong></td>
-                            <td>
-                                <strong>{{ applicant.name }}</strong>
-                                <small>{{ applicant.roll_no }}</small>
-                            </td>
+                            <td><strong>{{ applicant.name }}</strong><small>{{ applicant.roll_no }}</small></td>
                             <td><strong>{{ applicant.priority_score }}</strong></td>
                             <td>{{ applicant.cgpa }}</td>
                             <td>{{ applicant.attendance }}%</td>
@@ -114,18 +169,12 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Applicant</th><th>CGPA</th><th>Attendance</th>
-                            <th>Income</th><th>Eligibility</th><th>Priority</th>
-                        </tr>
+                        <tr><th>Applicant</th><th>CGPA</th><th>Attendance</th><th>Income</th><th>Eligibility</th><th>Priority</th></tr>
                     </thead>
                     <tbody>
                         {% for applicant in applicants %}
                         <tr class="{% if not applicant.eligible %}muted{% endif %}">
-                            <td>
-                                <strong>{{ applicant.name }}</strong>
-                                <small>{{ applicant.roll_no }}</small>
-                            </td>
+                            <td><strong>{{ applicant.name }}</strong><small>{{ applicant.roll_no }}</small></td>
                             <td>{{ applicant.cgpa }}</td>
                             <td>{{ applicant.attendance }}%</td>
                             <td>₹{{ "{:,.0f}".format(applicant.family_income) }}</td>
@@ -136,13 +185,7 @@
                                 <span class="status ineligible">Ineligible</span>
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if applicant.eligible %}
-                                <strong>{{ applicant.priority_score }}</strong>
-                                {% else %}
-                                —
-                                {% endif %}
-                            </td>
+                            <td>{% if applicant.eligible %}<strong>{{ applicant.priority_score }}</strong>{% else %}—{% endif %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
