@@ -123,3 +123,36 @@ Phase 2 does not implement scholarship budget allocation or dynamic programming.
 Phase 2 is officially marked complete after heap-based ranking implementation, 21/21 automated tests, browser verification, API verification, and dashboard visual refinement.
 
 The repository is now ready for the next phase of development: designing the actual budget-constrained scholarship allocation stage.
+
+
+## 2026-10-07 — Review 2 Unit 3/4 Allocation Implementation
+
+The second college review stage was implemented as a genuine budget-constrained allocation stage.
+
+Completed work:
+
+- Added exact 0/1 knapsack dynamic programming in `backend/algorithms/allocation.py`.
+- Added branch-and-bound as an independent exact solver for the same allocation model.
+- Integrated the allocation stage into the Flask dashboard.
+- Added a configurable budget input using ₹1,000 units.
+- Added an allocation API at `GET /api/allocation?budget=...`.
+- Added allocation-policy assumptions to the implementation record.
+- Added allocation algorithm tests and allocation API tests.
+- Added a GitHub Actions workflow for repeatable automated verification.
+
+Verification:
+
+- GitHub Actions run completed successfully.
+- 29 tests executed.
+- 29 tests passed.
+- 0 failures.
+- The allocation API was tested with a ₹1,00,000 budget.
+- The verified result awarded ₹90,000 with total priority value 257.0.
+- Selected applicants were Ananya Verma, Priya Gupta, and Ishita Kapoor.
+- The branch-and-bound result matched the dynamic-programming result for the tested API scenario.
+
+The project assumptions used by the allocation algorithm are explicitly documented and are not presented as official institutional scholarship rules.
+
+## Review 2 Evidence Boundary
+
+The automated test and API evidence above is genuine. A local browser screenshot has not been created in this record yet, so no screenshot is claimed here.
