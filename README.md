@@ -4,9 +4,21 @@ A Data Structures and Algorithms-II PBL project for transparent, explainable, an
 
 ## Current Stage
 
-**Phase 1 — Foundation**
+**Review 2 — Allocation and Optimization**
 
-Only work required for the current phase belongs in the repository right now. Later-phase features will be designed and added when they are actually needed.
+The working system now covers:
+
+- applicant intake and validation
+- eligibility evaluation
+- transparent priority scoring
+- hash-based applicant lookup
+- heap-based applicant ranking
+- budget-constrained 0/1 knapsack allocation using dynamic programming
+- branch-and-bound cross-checking of the allocation
+- Flask dashboard and APIs
+- automated tests
+
+The earlier Phase 1 and heap-ranking checkpoints remain part of the development history.
 
 ## Phase 1 Focus
 
