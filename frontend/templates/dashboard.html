@@ -8,11 +8,22 @@
 </head>
 <body>
     <main class="container">
-        <header>
-            <p class="eyebrow">DSA-II PBL</p>
-            <h1>Intelligent Scholarship Allocation System</h1>
-            <p class="subtitle">Eligibility evaluation and priority scoring for scholarship applicants.</p>
+        <header class="site-header">
+            <div class="brand"><span class="brand-mark">SA</span> Scholarship Allocation System</div>
+            <span class="header-note">DSA-II · Decision Support Prototype</span>
         </header>
+
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Scholarship review workspace</p>
+                <h1>Intelligent Scholarship Allocation System</h1>
+                <p class="subtitle">Evaluate applications consistently, understand eligibility, and rank deserving applicants using transparent scoring.</p>
+            </div>
+            <aside class="hero-note">
+                <strong>Current stage</strong>
+                Eligibility, priority scoring and heap-based applicant ranking.
+            </aside>
+        </section>
 
         <section class="stats">
             <article><span>Total Applicants</span><strong>{{ applicants|length }}</strong></article>
@@ -21,6 +32,7 @@
         </section>
 
         <section class="panel form-panel">
+            <p class="section-label" style="margin: 20px 22px 0;">Application intake</p>
             <div class="panel-heading">
                 <h2>Add Applicant</h2>
             </div>
@@ -58,9 +70,12 @@
             </form>
         </section>
 
-        <section class="panel">
+        <section class="panel ranking-panel">
             <div class="panel-heading">
-                <h2>Applicant Ranking</h2>
+                <div>
+                    <p>Decision order</p>
+                    <h2>Applicant Ranking</h2>
+                </div>
                 <a href="/api/rankings">Rankings API</a>
             </div>
             <div class="table-wrap">
@@ -73,7 +88,7 @@
                     <tbody>
                         {% for applicant in ranked_applicants %}
                         <tr>
-                            <td><strong>{{ applicant.rank }}</strong></td>
+                            <td><strong class="rank-number">{{ applicant.rank }}</strong></td>
                             <td>
                                 <strong>{{ applicant.name }}</strong>
                                 <small>{{ applicant.roll_no }}</small>
@@ -90,7 +105,10 @@
 
         <section class="panel">
             <div class="panel-heading">
-                <h2>Applicant Evaluation</h2>
+                <div>
+                    <p>Eligibility review</p>
+                    <h2>Applicant Evaluation</h2>
+                </div>
                 <a href="/api/applicants">JSON API</a>
             </div>
             <div class="table-wrap">
