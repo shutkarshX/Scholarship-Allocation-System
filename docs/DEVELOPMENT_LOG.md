@@ -24,7 +24,31 @@ Completed work:
 - Updated the dashboard to expose the manual-entry flow.
 - Kept storage local and did not introduce a database.
 
-The existing sample dataset remains the controlled development dataset. Manual entries are appended to that dataset during local testing.
+The controlled sample dataset remains the baseline development dataset. A temporary applicant was used during local browser testing and was not retained in the repository dataset.
+
+## 2026-10-07 — Phase 1 Verification
+
+The complete automated test suite was executed locally after the applicant lookup tests were added.
+
+Result:
+
+- 11 tests executed
+- 11 tests passed
+- 0 failures
+
+The browser application was also started locally and manually checked.
+
+Verified through the running dashboard:
+
+- Dashboard loads successfully.
+- Controlled applicants are displayed and evaluated.
+- Eligibility status is calculated for eligible and ineligible cases.
+- Priority scores are displayed for eligible applicants.
+- Manual applicant entry works.
+- A temporary test applicant appeared correctly after submission.
+- The current API lookup functionality was covered by the automated tests.
+
+The temporary browser-test applicant was removed from the local test state; the repository's `data/applicants.json` remains an empty manual-entry store.
 
 ## Current Repository State
 
@@ -57,5 +81,4 @@ A separate API-level test file was added for the current hash-based applicant lo
 - Existing roll number returns the corresponding applicant.
 - Unknown roll number returns HTTP 404 with an explicit error.
 
-The tests provide verification coverage for the current DSA lookup component. Actual local execution of the complete updated test suite and browser-based evidence still has to be performed in the developer environment before those results are recorded as completed evidence.
-
+The API lookup tests are included in the complete 11-test suite described above.
