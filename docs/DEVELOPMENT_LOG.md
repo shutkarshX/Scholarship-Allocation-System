@@ -82,3 +82,7 @@ A separate API-level test file was added for the current hash-based applicant lo
 - Unknown roll number returns HTTP 404 with an explicit error.
 
 The API lookup tests are included in the complete 11-test suite described above.
+
+## Phase 1 Checkpoint — Completed
+
+Phase 1 is officially marked complete after implementation, automated testing, and browser verification. This commit is the Phase 1 checkpoint before Phase 2 development begins.
